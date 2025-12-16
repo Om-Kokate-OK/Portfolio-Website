@@ -9,7 +9,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signIn: (username: string, password: string) => Promise<{ error: string | null }>;
+  signIn: (username: string, password: string) => Promise<{ error: string | null; requiresOtp?: boolean; userId?: string }>;
+  verifyOtp: (userId: string, otp: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -36,10 +37,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (username: string, password: string) => {
     try {
       const response = await api.post('/auth/login', { username, password });
-      const { token } = response.data;
+      const { token, requiresOtp, userId } = response.data;
+      if (requiresOtp) {
+        return { error: null, requiresOtp: true, userId };
+      }
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser({ id: '1', username }); // Simplified
+      return { error: null };
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } }; message?: string };
+      return { error: err.response?.data?.error || err.message || 'An error occurred' };
+    }
+  };
+
+  const verifyOtp = async (userId: string, otp: string) => {
+    try {
+      const response = await api.post('/auth/verify-otp', { userId, otp });
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser({ id: userId, username: 'admin' }); // Simplified
       return { error: null };
     } catch (error: unknown) {
       const err = error as { response?: { data?: { error?: string } }; message?: string };
@@ -57,6 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     signIn,
+    verifyOtp,
     signOut,
   };
 

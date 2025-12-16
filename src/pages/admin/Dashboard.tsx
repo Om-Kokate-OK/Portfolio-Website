@@ -21,16 +21,16 @@ import MessagesManager from './components/MessagesManager';
 type AdminSection = 'profile' | 'projects' | 'skills' | 'coding' | 'messages';
 
 export default function AdminDashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const { navigate } = useRouter();
   const [activeSection, setActiveSection] = useState<AdminSection>('profile');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/admin');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -101,8 +101,8 @@ export default function AdminDashboard() {
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeSection === item.id
-                        ? 'bg-cyan-500 text-white'
-                        : 'text-gray-400 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-cyan-500 text-white'
+                      : 'text-gray-400 hover:bg-slate-800 hover:text-white'
                       }`}
                   >
                     <Icon className="w-5 h-5" />

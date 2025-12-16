@@ -17,6 +17,8 @@ async function seedAdmin() {
         const user = new User({
             username: 'admin',
             password: hashedPassword,
+            email: 'admin@example.com', // Change to your email
+            role: 'admin',
         });
 
         await user.save();
