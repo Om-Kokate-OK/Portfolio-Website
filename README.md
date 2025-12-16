@@ -97,3 +97,5 @@ The frontend will run on `http://localhost:5173`
 - **CodingMetric**: Coding platform statistics
 - **ContactMessage**: Contact form submissions
 - **User**: Admin authentication
+
+<!-- Deploy trigger: Updated for Vercel redeploy --> 
