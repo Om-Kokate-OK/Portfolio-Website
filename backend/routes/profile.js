@@ -17,7 +17,8 @@ router.get('/', async (req, res) => {
 // Update profile
 router.put('/', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+        const { _id, ...updateData } = req.body; // Exclude _id to prevent casting errors
+        const profile = await Profile.findOneAndUpdate({}, updateData, { new: true, upsert: true });
         res.json(profile);
     } catch (error) {
         res.status(500).json({ error: error.message });
