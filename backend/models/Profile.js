@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
-    full_name: { type: String, required: true },
-    headline: { type: String, required: true },
-    about_me: { type: String, required: true },
-    email: { type: String, required: true },
+    full_name: String,
+    headline: String,
+    about_me: String,
+    email: String,
     phone: String,
     location: String,
     profile_image_url: String,

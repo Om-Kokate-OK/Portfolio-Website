@@ -33,6 +33,7 @@ export default function ProfileManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchProfile();
@@ -55,6 +56,8 @@ export default function ProfileManager() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess(false);
 
     setSaving(true);
     setSuccess(false);
@@ -67,7 +70,8 @@ export default function ProfileManager() {
       setSuccess(true);
     } catch (error: unknown) {
       console.error('Error saving profile:', error);
-      const err = error as { response?: { data?: unknown } };
+      const err = error as { response?: { data?: { error?: string } } };
+      setError(err.response?.data?.error || 'Failed to save profile');
       console.error('Error response:', err.response?.data);
     } finally {
       setSaving(false);
@@ -210,6 +214,7 @@ export default function ProfileManager() {
         </div>
 
         <div className="mt-6 flex items-center justify-between">
+          {error && <p className="text-red-500">{error}</p>}
           {success && <p className="text-green-500">Profile updated successfully!</p>}
           <button
             type="submit"
