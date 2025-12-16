@@ -82,4 +82,12 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
+module.exports = (req, res, next) => {
+  // Dummy auth for now
+  // Replace with JWT later if needed
+  req.user = { id: "demo-user-id" };
+  next();
+};
+
 module.exports = router;

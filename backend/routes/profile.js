@@ -4,38 +4,42 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get profile
+/**
+ * GET PROFILE
+ * Works even if dataset is empty
+ */
 router.get('/', async (req, res) => {
-    try {
-        const profile = await Profile.findOne({});
-        res.json(profile);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const profile = await Profile.findOne({});
+    res.json(profile || {}); // return empty object if not exists
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Update profile (SAFE)
+/**
+ * CREATE / UPDATE PROFILE
+ * EMPTY DATASET SAFE
+ */
 router.put('/', auth, async (req, res) => {
-    try {
-        // 🔥 Remove _id completely if it exists
-        if (req.body._id === "" || req.body._id) {
-            delete req.body._id;
-        }
+  try {
+    // 🔥 CRITICAL FIX: remove _id if present
+    delete req.body._id;
 
-        const profile = await Profile.findOneAndUpdate(
-            {},                     // match first document
-            { $set: req.body },     // update only fields
-            {
-                new: true,
-                upsert: true,       // create if not exists
-                runValidators: true
-            }
-        );
+    const profile = await Profile.findOneAndUpdate(
+      {},                 // single profile
+      { $set: req.body }, // update fields
+      {
+        new: true,
+        upsert: true,
+        runValidators: true
+      }
+    );
 
-        res.json(profile);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;
