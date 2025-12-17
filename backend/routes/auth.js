@@ -11,7 +11,7 @@ const router = express.Router();
 const otpStore = new Map();
 
 // Email transporter
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
@@ -34,13 +34,16 @@ router.post('/login', async (req, res) => {
             const otp = crypto.randomInt(100000, 999999).toString();
             otpStore.set(user._id.toString(), { otp, expires: Date.now() + 5 * 60 * 1000 }); // 5 min
 
-            // Send OTP email
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: user.email,
-                subject: 'Admin Login OTP',
-                text: `Your OTP for admin login is: ${otp}. It expires in 5 minutes.`
-            });
+            // For demo: log OTP to console (in production, send via email/SMS)
+            console.log(`Admin OTP for ${user.username}: ${otp}`);
+
+            // Uncomment below for email sending
+            // await transporter.sendMail({
+            //     from: process.env.EMAIL_USER,
+            //     to: user.email,
+            //     subject: 'Admin Login OTP',
+            //     text: `Your OTP for admin login is: ${otp}. It expires in 5 minutes.`
+            // });
 
             return res.json({ requiresOtp: true, userId: user._id });
         }
@@ -84,10 +87,10 @@ router.post('/register', async (req, res) => {
 
 
 module.exports = (req, res, next) => {
-  // Dummy auth for now
-  // Replace with JWT later if needed
-  req.user = { id: "demo-user-id" };
-  next();
+    // Dummy auth for now
+    // Replace with JWT later if needed
+    req.user = { id: "demo-user-id" };
+    next();
 };
 
 module.exports = router;

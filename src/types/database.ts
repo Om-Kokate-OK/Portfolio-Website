@@ -127,6 +127,47 @@ export interface Database {
           updated_at?: string;
         };
       };
+      certificates: {
+        Row: {
+          id: string;
+          title: string;
+          issuer: string;
+          date_issued: string;
+          description: string | null;
+          image_url: string | null;
+          credential_url: string | null;
+          featured: boolean;
+          display_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          issuer: string;
+          date_issued: string;
+          description?: string | null;
+          image_url?: string | null;
+          credential_url?: string | null;
+          featured?: boolean;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          issuer?: string;
+          date_issued?: string;
+          description?: string | null;
+          image_url?: string | null;
+          credential_url?: string | null;
+          featured?: boolean;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       coding_metrics: {
         Row: {
           id: string;

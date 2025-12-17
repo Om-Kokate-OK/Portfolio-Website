@@ -9,16 +9,18 @@ import {
   LogOut,
   Menu,
   X,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from '../../hooks/useRouter';
 import ProfileManager from './components/ProfileManager';
 import ProjectsManager from './components/ProjectsManager';
 import SkillsManager from './components/SkillsManager';
+import CertificatesManager from './components/CertificatesManager';
 import CodingMetricsManager from './components/CodingMetricsManager';
 import MessagesManager from './components/MessagesManager';
 
-type AdminSection = 'profile' | 'projects' | 'skills' | 'coding' | 'messages';
+type AdminSection = 'profile' | 'projects' | 'skills' | 'certificates' | 'coding' | 'messages';
 
 export default function AdminDashboard() {
   const { user, signOut, loading } = useAuth();
@@ -41,6 +43,7 @@ export default function AdminDashboard() {
     { id: 'profile' as AdminSection, label: 'Profile', icon: User },
     { id: 'projects' as AdminSection, label: 'Projects', icon: FolderKanban },
     { id: 'skills' as AdminSection, label: 'Skills', icon: Code2 },
+    { id: 'certificates' as AdminSection, label: 'Certificates', icon: Award },
     { id: 'coding' as AdminSection, label: 'Coding Metrics', icon: Trophy },
     { id: 'messages' as AdminSection, label: 'Messages', icon: Mail },
   ];
@@ -53,6 +56,8 @@ export default function AdminDashboard() {
         return <ProjectsManager />;
       case 'skills':
         return <SkillsManager />;
+      case 'certificates':
+        return <CertificatesManager />;
       case 'coding':
         return <CodingMetricsManager />;
       case 'messages':

@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Skills from './pages/Skills';
+import Certificates from './pages/Certificates';
 import CodingProfile from './pages/CodingProfile';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
@@ -24,6 +25,10 @@ function App() {
       return <Projects />;
     }
 
+    if (currentPath.startsWith('/certificates/')) {
+      return <Certificates />;
+    }
+
     switch (currentPath) {
       case '/':
         return <Home />;
@@ -31,6 +36,8 @@ function App() {
         return <Projects />;
       case '/skills':
         return <Skills />;
+      case '/certificates':
+        return <Certificates />;
       case '/coding':
         return <CodingProfile />;
       case '/contact':
