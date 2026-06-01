@@ -58,36 +58,9 @@ The backend will run on `http://localhost:5000`
    npm run dev
    ```
 
-The frontend will run on `http://localhost:5173`
+The frontend will run on `http://localhost:
 
-### Usage
 
-- Visit the portfolio website at `http://localhost:5173`
-- Access the admin panel at `http://localhost:5173/admin/login`
-- Login with username: `admin`, password: `admin123`
-
-### API Endpoints
-
-- `GET /api/profile` - Get profile information
-- `PUT /api/profile` - Update profile
-- `GET /api/projects` - Get all projects
-- `POST /api/projects` - Create project
-- `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
-- `GET /api/skills` - Get all skills
-- `POST /api/skills` - Create skill
-- `PUT /api/skills/:id` - Update skill
-- `DELETE /api/skills/:id` - Delete skill
-- `GET /api/coding-metrics` - Get coding metrics
-- `POST /api/coding-metrics` - Create coding metric
-- `PUT /api/coding-metrics/:id` - Update coding metric
-- `DELETE /api/coding-metrics/:id` - Delete coding metric
-- `GET /api/contact` - Get contact messages
-- `POST /api/contact` - Send contact message
-- `PUT /api/contact/:id` - Update contact message
-- `DELETE /api/contact/:id` - Delete contact message
-- `POST /api/auth/login` - Admin login
-- `POST /api/auth/register` - Register admin user
 
 ### Database Models
 
