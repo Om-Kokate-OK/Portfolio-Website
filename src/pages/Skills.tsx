@@ -47,47 +47,61 @@ export default function Skills() {
 
   const getProgress = (level?: string) => ({ 'Expert': '95%', 'Advanced': '85%', 'Intermediate': '70%' }[level || ''] || '50%');
 
-  if (loading) return <div className="min-h-screen bg-[#050505] flex items-center justify-center"><Loader className="animate-spin text-blue-500" /></div>;
+  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader className="animate-spin text-cyan-500" /></div>;
 
   return (
-    <div className="min-h-screen py-24 bg-[#050505] text-white">
-      <div className="container mx-auto px-6 max-w-7xl">
-        <div className="text-center mb-24">
-          <h1 className="text-6xl font-black mb-6 tracking-tight">Skills & Tech Stack</h1>
-          <p className="text-slate-500 max-w-xl mx-auto text-lg font-light">A comprehensive toolkit of technologies mastered through research and production.</p>
+    <div className="min-h-screen py-24 bg-slate-950 text-white relative overflow-hidden">
+      {/* Cyber Grid Background */}
+      <div className="absolute inset-0 cyber-grid opacity-[0.06] pointer-events-none"></div>
+      
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+        <div className="text-center mb-20 space-y-4">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 shadow-neon-cyan/5 mx-auto">
+            <Code2 size={14} className="text-cyan-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Technical Capability</span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
+            Tech Stack
+          </h1>
+          <p className="text-slate-400 font-light max-w-xl mx-auto text-lg leading-relaxed">
+            A comprehensive toolbox of technologies mastered through research, development, and system deployments.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {Object.entries(groupedSkills).map(([category, skills]: any) => {
             const theme = getTheme(category);
             const Icon = theme.icon;
             return (
-              <div key={category} className="bg-[#0f0f0f] rounded-[3rem] p-10 border border-white/5 shadow-2xl group/card transition-all hover:border-white/10">
-                <div className="flex items-center gap-5 mb-3">
-                  <div className="p-4 bg-white/5 rounded-[1.2rem] group-hover/card:bg-white/10 transition-colors">
-                    <Icon className={theme.color} size={28} />
+              <div key={category} className="bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-cyan-500/30 rounded-3xl p-8 shadow-2xl transition-all duration-500 flex flex-col justify-between group/card">
+                <div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3.5 bg-white/5 rounded-2xl group-hover/card:bg-cyan-500/10 border border-white/5 group-hover/card:border-cyan-500/25 transition-all">
+                      <Icon className={theme.color} size={24} />
+                    </div>
+                    <h2 className="text-xl font-black uppercase tracking-tight text-white">{category}</h2>
                   </div>
-                  <h2 className="text-2xl font-bold tracking-tight">{category}</h2>
+                  <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-8">{theme.desc}</p>
                 </div>
-                <p className="text-slate-600 text-sm mb-12 font-medium ml-2 uppercase tracking-widest">{theme.desc}</p>
 
-                <div className="space-y-9">
+                <div className="space-y-6">
                   {skills.sort((a:any, b:any) => a.display_order - b.display_order).map((skill: any) => {
                     const slug = TECH_SLUGS[skill.skill_name] || 'codeforces';
                     const percent = getProgress(skill.proficiency_level);
                     return (
-                      <div key={skill._id} className="group/item">
-                        <div className="flex items-center gap-4 mb-3">
-                          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center border border-white/10 p-2.5">
-                            <img src={`https://cdn.simpleicons.org/${slug}`} className="w-full h-full object-contain brightness-150 group-hover/item:brightness-200 transition-all" alt="" />
+                      <div key={skill._id} className="space-y-2 group/item">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center border border-white/10 p-2">
+                            <img src={`https://cdn.simpleicons.org/${slug}`} className="w-full h-full object-contain filter brightness-90 group-hover/item:brightness-100 transition-all" alt="" />
                           </div>
-                          <span className="font-bold text-slate-300 group-hover/item:text-white transition-colors">{skill.skill_name}</span>
+                          <span className="text-xs font-bold text-slate-300 group-hover/item:text-white transition-all">{skill.skill_name}</span>
                         </div>
-                        <div className="flex items-center gap-5">
-                          <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                            <div className={`h-full ${theme.bar} rounded-full transition-all duration-1000 ease-in-out`} style={{ width: percent }} />
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div className={`h-full ${theme.bar} rounded-full transition-all duration-1000`} style={{ width: percent }} />
                           </div>
-                          <span className={`text-[11px] font-black tracking-tighter w-8 text-right ${theme.color}`}>{percent}</span>
+                          <span className={`text-[10px] font-black w-6 text-right ${theme.color}`}>{percent}</span>
                         </div>
                       </div>
                     );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Trash2, Eye, X, Loader } from 'lucide-react';
+import { Mail, Trash2, Eye, X, Loader, CornerDownRight } from 'lucide-react';
 import { api } from '../../../lib/api';
 
 interface ContactMessage {
@@ -52,7 +52,7 @@ export default function MessagesManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this message?')) return;
+    if (!confirm('Are you sure you want to delete this message record?')) return;
 
     try {
       await api.delete(`/contact/${id}`);
@@ -73,13 +73,14 @@ export default function MessagesManager() {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
+    }).toUpperCase();
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader className="w-8 h-8 animate-spin text-cyan-500" />
+      <div className="flex items-center justify-center h-64 font-mono text-xs uppercase tracking-widest text-[#888888]">
+        <Loader className="w-8 h-8 animate-spin text-white mr-3" />
+        <span>Fetching inbox queues...</span>
       </div>
     );
   }
@@ -87,71 +88,81 @@ export default function MessagesManager() {
   const unreadCount = messages.filter((msg) => !msg.read).length;
 
   return (
-    <div className="max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center space-x-3 mb-2">
-          <h1 className="text-3xl font-bold text-white">Messages</h1>
-          {unreadCount > 0 && (
-            <span className="px-3 py-1 bg-cyan-500 text-white text-sm rounded-full">
-              {unreadCount} unread
-            </span>
-          )}
+    <div className="max-w-6xl mx-auto space-y-12 select-none font-mono">
+      
+      {/* Title & Setup Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-8 relative">
+        <div className="space-y-2">
+          <span className="text-[10px] uppercase tracking-widest text-[#888888]">/ Port Inbox Streams</span>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-4xl font-black uppercase tracking-tighter text-white">SYS_MESSAGES</h1>
+            {unreadCount > 0 && (
+              <span className="px-2.5 py-1 border border-white text-white text-[10px] font-black uppercase tracking-widest bg-white/5 animate-pulse">
+                {unreadCount} UNREAD
+              </span>
+            )}
+          </div>
         </div>
-        <p className="text-gray-400">Contact form submissions from your portfolio</p>
       </div>
 
       {messages.length === 0 ? (
-        <div className="text-center py-20 bg-slate-900 rounded-xl border border-slate-800">
-          <Mail className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No messages yet</p>
+        <div className="text-center py-20 border border-dashed border-white/10 rounded-none bg-black">
+          <Mail className="w-12 h-12 text-[#888888] mx-auto mb-4" />
+          <p className="text-xs uppercase tracking-widest text-[#888888]">No dynamic message queues logged.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {messages.map((message) => (
             <div
               key={message._id}
-              className={`bg-slate-900 rounded-xl p-6 border transition-all cursor-pointer ${message.read
-                ? 'border-slate-800 hover:border-slate-700'
-                : 'border-cyan-500/50 bg-slate-900/50'
-                }`}
+              className={`bg-black p-6 border transition-all cursor-pointer rounded-none relative group flex flex-col justify-between ${
+                message.read
+                  ? 'border-white/10 hover:border-white'
+                  : 'border-white bg-white/5'
+              }`}
               onClick={() => openMessage(message)}
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
+              <div className="absolute top-0 left-0 w-1 h-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
                     {!message.read && (
-                      <span className="w-2 h-2 bg-cyan-500 rounded-full"></span>
+                      <span className="w-1.5 h-1.5 bg-white shrink-0"></span>
                     )}
-                    <h3 className="text-lg font-bold text-white">{message.name}</h3>
-                    <span className="text-gray-500 text-sm">{message.email}</span>
+                    <h3 className="text-sm font-black text-white uppercase">{message.name}</h3>
+                    <span className="text-[#888888] text-[10px] tracking-wider font-light">({message.email})</span>
                   </div>
+                  
                   {message.subject && (
-                    <p className="text-gray-400 mb-2">
-                      <span className="font-medium">Subject:</span> {message.subject}
+                    <p className="text-xs text-slate-300">
+                      <span className="text-[#888888] uppercase tracking-wider font-bold">Subject:</span> {message.subject.toUpperCase()}
                     </p>
                   )}
-                  <p className="text-gray-400 line-clamp-2">{message.message}</p>
-                  <p className="text-gray-500 text-sm mt-3">{formatDate(message.created_at)}</p>
+                  <p className="text-[#888888] text-xs font-light line-clamp-1">{message.message}</p>
+                  <p className="text-[9px] text-slate-500 tracking-wider pt-2">{formatDate(message.created_at)}</p>
                 </div>
 
-                <div className="flex space-x-2 ml-4">
+                <div className="flex items-center space-x-3 shrink-0 self-end md:self-center">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       openMessage(message);
                     }}
-                    className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                    className="p-2 border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all bg-transparent"
+                    title="Read Message"
                   >
-                    <Eye className="w-5 h-5 text-cyan-400" />
+                    <Eye className="w-4 h-4" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDelete(message._id);
                     }}
-                    className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors"
+                    className="p-2 border border-red-500/20 text-red-500 hover:border-red-500 hover:bg-red-500/10 transition-all"
+                    title="Delete Message"
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -161,67 +172,81 @@ export default function MessagesManager() {
       )}
 
       {selectedMessage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-slate-800">
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6 flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Message Details</h2>
-              <button onClick={closeMessage} className="text-gray-400 hover:text-white">
-                <X className="w-6 h-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
+          <div className="bg-black border border-white/10 max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-none relative flex flex-col justify-between animate-fadeIn shadow-2xl">
+            
+            {/* Subtle decorative brutalist corner elements */}
+            <div className="absolute -top-1 -left-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white"></div>
+
+            <div className="sticky top-0 bg-black border-b border-white/10 p-6 flex justify-between items-center z-10">
+              <h2 className="text-sm font-black uppercase text-white tracking-widest">/ Port Queue Stream Details</h2>
+              <button 
+                onClick={closeMessage} 
+                className="text-[#888888] hover:text-white p-1 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">From</label>
-                <p className="text-lg text-white">{selectedMessage.name}</p>
-              </div>
+            <div className="p-8 space-y-6 text-xs uppercase tracking-widest text-[#888888]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[8px] tracking-widest text-[#888888] mb-1">/ Sender ID</label>
+                  <p className="text-sm font-bold text-white">{selectedMessage.name}</p>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                <a
-                  href={`mailto:${selectedMessage.email}`}
-                  className="text-lg text-cyan-400 hover:text-cyan-300"
-                >
-                  {selectedMessage.email}
-                </a>
+                <div>
+                  <label className="block text-[8px] tracking-widest text-[#888888] mb-1">/ Sync Coordinates</label>
+                  <a
+                    href={`mailto:${selectedMessage.email}`}
+                    className="text-sm font-bold text-white hover:underline lowercase tracking-normal flex items-center gap-1.5"
+                  >
+                    <span>{selectedMessage.email}</span>
+                  </a>
+                </div>
               </div>
 
               {selectedMessage.subject && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Subject</label>
-                  <p className="text-lg text-white">{selectedMessage.subject}</p>
+                  <label className="block text-[8px] tracking-widest text-[#888888] mb-1">/ Topic / Subject</label>
+                  <p className="text-sm font-bold text-white">{selectedMessage.subject}</p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Message</label>
-                <div className="bg-slate-800 rounded-lg p-4">
-                  <p className="text-white whitespace-pre-line leading-relaxed">
+                <label className="block text-[8px] tracking-widest text-[#888888] mb-2">/ Message Body Payload</label>
+                <div className="bg-[#0b0b0b] border border-white/10 p-6 rounded-none">
+                  <p className="text-white whitespace-pre-line leading-relaxed tracking-wide lowercase uppercase-first-letter">
                     {selectedMessage.message}
                   </p>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Received</label>
-                <p className="text-white">{formatDate(selectedMessage.created_at)}</p>
+              <div className="flex justify-between items-center pt-2">
+                <div>
+                  <label className="block text-[8px] tracking-widest text-[#888888] mb-1">/ Timestamp Sync</label>
+                  <p className="text-[10px] font-bold text-slate-300">{formatDate(selectedMessage.created_at)}</p>
+                </div>
+                <span className="w-1.5 h-1.5 bg-emerald-500 animate-pulse" title="System synchronised"></span>
               </div>
             </div>
 
-            <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 p-6 flex justify-between">
+            <div className="sticky bottom-0 bg-black border-t border-white/10 p-6 flex flex-col sm:flex-row justify-between gap-4 z-10">
               <button
                 onClick={() => handleDelete(selectedMessage._id)}
-                className="flex items-center space-x-2 px-6 py-3 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors"
+                className="px-6 py-3 border border-red-500/20 text-red-500 hover:border-red-500 hover:bg-red-500/10 transition-all text-xs font-black uppercase tracking-widest"
               >
-                <Trash2 className="w-5 h-5" />
-                <span>Delete Message</span>
+                Delete Stream
               </button>
               <a
-                href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your message'}`}
-                className="flex items-center space-x-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
+                href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Portfolio Inquiry'}`}
+                className="px-8 py-3.5 border border-white bg-white hover:bg-black text-black hover:text-white font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <Mail className="w-5 h-5" />
-                <span>Reply via Email</span>
+                <CornerDownRight className="w-4 h-4" />
+                <span>Reply Coordinate</span>
               </a>
             </div>
           </div>

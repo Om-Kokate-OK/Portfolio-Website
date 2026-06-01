@@ -30,13 +30,13 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/admin');
+      navigate('/openItBaby');
     }
   }, [user, loading, navigate]);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/admin');
+    navigate('/openItBaby');
   };
 
   const menuItems = [
@@ -72,30 +72,36 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-[#0b0b0b] text-white overflow-hidden select-none">
       <div className="flex h-screen">
+        
+        {/* Sidebar */}
         <aside
-          className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transition-transform duration-300`}
+          className={`${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black border-r border-white/10 transition-transform duration-300 flex flex-col justify-between`}
         >
           <div className="flex flex-col h-full">
-            <div className="p-6 border-b border-slate-800">
+            <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <LayoutDashboard className="w-6 h-6 text-cyan-400" />
-                  <h2 className="text-xl font-bold text-white">Admin Panel</h2>
+                  <LayoutDashboard className="w-5 h-5 text-white" />
+                  <h2 className="text-lg font-black uppercase tracking-tighter text-white">SYS_DASHBOARD</h2>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="lg:hidden text-gray-400 hover:text-white"
+                  className="lg:hidden text-[#888888] hover:text-white"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-sm text-gray-400 mt-2">{user.username}</p>
+              <p className="text-[10px] font-mono-labels uppercase tracking-widest text-[#888888] mt-2">
+                Node: {user.username}
+              </p>
             </div>
 
-            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {/* Navigation links */}
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto font-mono-labels text-xs uppercase tracking-widest text-[#888888]">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -105,53 +111,70 @@ export default function AdminDashboard() {
                       setActiveSection(item.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeSection === item.id
-                      ? 'bg-cyan-500 text-white'
-                      : 'text-gray-400 hover:bg-slate-800 hover:text-white'
-                      }`}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${
+                      activeSection === item.id
+                        ? 'bg-white text-black font-black'
+                        : 'hover:bg-white/5 hover:text-white'
+                    }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <Icon className="w-4 h-4" />
+                    <span>/ {item.label}</span>
                   </button>
                 );
               })}
             </nav>
 
-            <div className="p-4 border-t border-slate-800 space-y-2">
+            {/* Bottom Actions */}
+            <div className="p-4 border-t border-white/10 space-y-2 font-mono-labels text-xs uppercase tracking-widest">
               <button
                 onClick={() => {
                   navigate('/');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full px-4 py-3 text-gray-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-left"
+                className="w-full px-4 py-3 text-[#888888] hover:bg-white/5 hover:text-white rounded-xl transition-all text-left"
               >
-                View Portfolio
+                / View Portfolio
               </button>
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
               >
-                <LogOut className="w-5 h-5" />
-                <span>Sign Out</span>
+                <LogOut className="w-4 h-4" />
+                <span>/ Sign Out</span>
               </button>
             </div>
           </div>
         </aside>
 
-        <main className="flex-1 overflow-hidden">
-          <div className="h-full flex flex-col">
-            <header className="bg-slate-900 border-b border-slate-800 p-4 lg:hidden">
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="text-white p-2 hover:bg-slate-800 rounded-lg"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-            </header>
+        {/* Content Region */}
+        <main className="flex-grow flex flex-col overflow-hidden">
+          
+          {/* Mobile header */}
+          <header className="bg-black border-b border-white/10 p-4 lg:hidden flex justify-between items-center">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="text-white p-2 hover:bg-white/5 rounded-xl transition-all"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="text-xs font-mono-labels uppercase tracking-widest text-[#888888]">
+              SYS_DASHBOARD
+            </span>
+          </header>
 
-            <div className="flex-1 overflow-y-auto p-6">{renderContent()}</div>
+          {/* Active section viewport */}
+          <div className="flex-1 overflow-y-auto p-8 relative">
+            {/* Background grid wireframe for dashboard body */}
+            <div className="absolute inset-0 grid grid-cols-3 pointer-events-none opacity-20">
+              <div className="border-r border-white/5"></div>
+              <div className="border-r border-white/5"></div>
+              <div></div>
+            </div>
+
+            <div className="relative z-10">{renderContent()}</div>
           </div>
         </main>
+
       </div>
     </div>
   );

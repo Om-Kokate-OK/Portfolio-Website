@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Github, ExternalLink, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Github, ExternalLink, X, ChevronLeft, ChevronRight, Terminal, Server } from 'lucide-react';
 import { api } from '../lib/api';
 import { useRouter } from '../hooks/useRouter';
 
@@ -67,21 +67,29 @@ export default function Projects() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-20 bg-slate-950">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            My Projects
+    <div className="min-h-screen py-24 bg-slate-950 relative overflow-hidden">
+      {/* Background Cyber Art */}
+      <div className="absolute inset-0 cyber-grid opacity-[0.06] pointer-events-none"></div>
+
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+        <div className="text-center mb-20 space-y-4">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 shadow-neon-cyan/5 mx-auto">
+            <Server size={14} className="text-cyan-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Production Ready Assets</span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
+            Systems Directory
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            A showcase of my development work, featuring web applications, tools, and experiments
+          <p className="text-slate-400 font-light max-w-2xl mx-auto text-lg leading-relaxed">
+            A comprehensive catalog of my structural software implementations, system layouts, and full-stack solutions.
           </p>
         </div>
 
@@ -89,69 +97,77 @@ export default function Projects() {
           {projects.map((project) => (
             <div
               key={project._id}
-              className="group bg-slate-900 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 border border-slate-800 hover:border-cyan-500 cursor-pointer"
+              className="group bg-white/[0.02] hover:bg-white/[0.05] rounded-3xl overflow-hidden border border-white/5 hover:border-cyan-500/30 shadow-2xl transition-all duration-500 cursor-pointer flex flex-col justify-between"
               onClick={() => {
                 setSelectedProject(project);
                 setCurrentImageIndex(0);
               }}
             >
-              {project.image_urls.length > 0 ? (
-                <div className="aspect-video overflow-hidden bg-slate-800">
-                  <img
-                    src={project.image_urls[0]}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+              <div>
+                {project.image_urls.length > 0 ? (
+                  <div className="aspect-video overflow-hidden bg-slate-950 p-3">
+                    <img
+                      src={project.image_urls[0]}
+                      alt={project.title}
+                      className="w-full h-full object-cover rounded-2xl filter brightness-90 group-hover:scale-[1.03] group-hover:brightness-100 transition-all duration-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-slate-900/50 flex items-center justify-center border-b border-white/5">
+                    <span className="text-slate-600 text-xs font-bold uppercase tracking-widest">No preview available</span>
+                  </div>
+                )}
+                <div className="p-6 space-y-3">
+                  <h3 className="text-xl font-black tracking-tight text-white group-hover:text-cyan-400 transition-all">
+                    {project.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm leading-relaxed line-clamp-3">{project.short_description}</p>
                 </div>
-              ) : (
-                <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                  <span className="text-gray-600 text-lg">No preview</span>
-                </div>
-              )}
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-3 group-hover:text-cyan-400 transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-gray-400 mb-4 line-clamp-3">{project.short_description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
+              </div>
+
+              <div className="p-6 pt-0 space-y-4">
+                <div className="flex flex-wrap gap-2">
                   {project.tech_stack.slice(0, 3).map((tech, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 bg-slate-800 text-cyan-400 text-sm rounded-full"
+                      className="px-3 py-1 bg-white/[0.04] border border-white/5 text-slate-400 rounded-lg text-[10px] font-bold uppercase tracking-wider"
                     >
                       {tech}
                     </span>
                   ))}
                   {project.tech_stack.length > 3 && (
-                    <span className="px-3 py-1 bg-slate-800 text-gray-400 text-sm rounded-full">
+                    <span className="px-3 py-1 bg-white/[0.04] border border-white/5 text-slate-500 rounded-lg text-[10px] font-bold">
                       +{project.tech_stack.length - 3}
                     </span>
                   )}
                 </div>
-                <div className="flex items-center space-x-4">
-                  {project.github_url && (
-                    <a
-                      href={project.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-gray-400 hover:text-cyan-400 transition-colors"
-                    >
-                      <Github className="w-5 h-5" />
-                    </a>
-                  )}
-                  {project.live_demo_url && (
-                    <a
-                      href={project.live_demo_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-gray-400 hover:text-cyan-400 transition-colors"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </a>
-                  )}
-                  <span className="ml-auto text-cyan-400 font-medium">View Details →</span>
+
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <span className="text-xs font-black text-cyan-400 uppercase tracking-widest group-hover:translate-x-1 transition-transform">Explore System →</span>
+                  <div className="flex items-center space-x-4 text-slate-500">
+                    {project.github_url && (
+                      <a
+                        href={project.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="hover:text-white transition-colors"
+                      >
+                        <Github className="w-5 h-5" />
+                      </a>
+                    )}
+                    {project.live_demo_url && (
+                      <a
+                        href={project.live_demo_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="hover:text-white transition-colors"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -159,55 +175,59 @@ export default function Projects() {
         </div>
 
         {projects.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-gray-400 text-lg">No projects yet. Add your first project in the admin panel.</p>
+          <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-3xl max-w-xl mx-auto">
+            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">No implementations configured yet.</p>
           </div>
         )}
       </div>
 
+      {/* Cyber Glass Slideshow Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto border border-slate-800">
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center z-10">
-              <h2 className="text-2xl font-bold">{selectedProject.title}</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+          <div className="bg-slate-950 border border-white/10 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <div className="sticky top-0 bg-slate-950/80 backdrop-blur-md border-b border-white/5 p-6 flex justify-between items-center z-10">
+              <div className="flex items-center space-x-3">
+                <Terminal size={18} className="text-cyan-400" />
+                <h2 className="text-2xl font-black uppercase tracking-tight text-white">{selectedProject.title}</h2>
+              </div>
               <button
                 onClick={() => setSelectedProject(null)}
-                className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                className="p-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-slate-400 hover:text-white transition-all"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-8 space-y-8">
               {selectedProject.image_urls.length > 0 && (
-                <div className="relative mb-6 rounded-xl overflow-hidden bg-slate-800">
+                <div className="relative rounded-2xl overflow-hidden bg-slate-900/60 p-3 border border-white/5">
                   <img
                     src={selectedProject.image_urls[currentImageIndex]}
                     alt={`${selectedProject.title} - ${currentImageIndex + 1}`}
-                    className="w-full aspect-video object-contain"
+                    className="w-full aspect-video object-contain rounded-xl"
                   />
                   {selectedProject.image_urls.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors"
+                        className="absolute left-6 top-1/2 -translate-y-1/2 p-3 bg-black/60 hover:bg-black/80 border border-white/10 rounded-full transition-all text-slate-300 hover:text-white"
                       >
-                        <ChevronLeft className="w-6 h-6" />
+                        <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors"
+                        className="absolute right-6 top-1/2 -translate-y-1/2 p-3 bg-black/60 hover:bg-black/80 border border-white/10 rounded-full transition-all text-slate-300 hover:text-white"
                       >
-                        <ChevronRight className="w-6 h-6" />
+                        <ChevronRight className="w-5 h-5" />
                       </button>
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
                         {selectedProject.image_urls.map((_, idx) => (
                           <button
                             key={idx}
                             onClick={() => setCurrentImageIndex(idx)}
-                            className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex
-                              ? 'bg-cyan-400 w-8'
-                              : 'bg-white/50 hover:bg-white/70'
+                            className={`w-1.5 h-1.5 rounded-full transition-all ${idx === currentImageIndex
+                              ? 'bg-cyan-400 w-5'
+                              : 'bg-white/40 hover:bg-white/60'
                               }`}
                           />
                         ))}
@@ -217,27 +237,27 @@ export default function Projects() {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2">
                 {selectedProject.tech_stack.map((tech, idx) => (
                   <span
                     key={idx}
-                    className="px-4 py-2 bg-slate-800 text-cyan-400 rounded-full"
+                    className="px-4 py-2 bg-white/[0.03] border border-white/5 text-cyan-400 rounded-xl text-xs font-bold uppercase tracking-wider"
                   >
                     {tech}
                   </span>
                 ))}
               </div>
 
-              <div className="flex items-center space-x-4 mb-8">
+              <div className="flex items-center space-x-4">
                 {selectedProject.github_url && (
                   <a
                     href={selectedProject.github_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-6 py-3 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 rounded-xl transition-all text-xs font-black uppercase tracking-wider text-slate-300 hover:text-white"
                   >
-                    <Github className="w-5 h-5" />
-                    <span>View Code</span>
+                    <Github className="w-4 h-4 text-cyan-400" />
+                    <span>View Repository</span>
                   </a>
                 )}
                 {selectedProject.live_demo_url && (
@@ -245,26 +265,26 @@ export default function Projects() {
                     href={selectedProject.live_demo_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 rounded-xl transition-all text-xs font-black uppercase tracking-wider text-white shadow-neon-cyan/20"
                   >
-                    <ExternalLink className="w-5 h-5" />
-                    <span>Live Demo</span>
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Launch Live Demo</span>
                   </a>
                 )}
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-3 text-cyan-400">Description</h3>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 border-t border-white/5 pt-8">
+                <div className="lg:col-span-2 space-y-3">
+                  <h3 className="text-lg font-black uppercase tracking-wider text-cyan-400">System Description</h3>
+                  <p className="text-slate-300 leading-relaxed whitespace-pre-line text-sm font-light">
                     {selectedProject.detailed_description || selectedProject.short_description}
                   </p>
                 </div>
 
                 {selectedProject.my_contribution && (
-                  <div className="border-t border-slate-800 pt-6">
-                    <h3 className="text-xl font-bold mb-3 text-cyan-400">My Contribution</h3>
-                    <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                  <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-3">
+                    <h3 className="text-lg font-black uppercase tracking-wider text-cyan-400">Contributions</h3>
+                    <p className="text-slate-300 leading-relaxed whitespace-pre-line text-sm font-light">
                       {selectedProject.my_contribution}
                     </p>
                   </div>

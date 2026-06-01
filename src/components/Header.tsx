@@ -1,99 +1,93 @@
-import { Menu, X, Code2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from '../hooks/useRouter';
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { currentPath, navigate } = useRouter();
+  const { navigate } = useRouter();
+  const [timeString, setTimeString] = useState('');
 
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/projects', label: 'Projects' },
-    { path: '/skills', label: 'Skills' },
-    { path: '/certificates', label: 'Certificates' },
-    { path: '/coding', label: 'Coding Profile' },
-    { path: '/contact', label: 'Contact' },
-  ];
+  // Dynamic ticking timezone clock for Mumbai (GMT+5:30)
+  useEffect(() => {
+    const updateTime = () => {
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+      const formatter = new Intl.DateTimeFormat([], options);
+      setTimeString(formatter.format(new Date()));
+    };
 
-  const handleNavClick = (path: string) => {
-    navigate(path);
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNav = (anchorId: string) => {
+    // If on sub-page, navigate back to home first, then scroll
+    if (window.location.hash && window.location.hash !== '#/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(anchorId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    } else {
+      const element = document.getElementById(anchorId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
-  const isActive = (path: string) => currentPath === path;
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-resend-black/95 backdrop-blur-sm border-b border-resend-gray-800">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <button
-            onClick={() => handleNavClick('/')}
-            className="flex items-center space-x-2 text-white hover:text-resend-indigo-400 transition-colors"
-          >
-            <Code2 className="w-6 h-6" />
-            <span className="font-bold text-lg">Portfolio</span>
-          </button>
+    <header className="sticky top-0 z-50 w-full bg-[#000000]/90 backdrop-blur-md border-b border-white/10 select-none">
+      <div className="max-w-[1600px] mx-auto px-6 h-20 flex justify-between items-center text-white">
+        {/* Brand Name on the Left */}
+        <button
+          onClick={() => handleNav('hero-view')}
+          className="font-black text-xl tracking-tighter uppercase text-white hover:opacity-75 transition-opacity"
+        >
+          OM KOKATE
+        </button>
 
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavClick(item.path)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${isActive(item.path)
-                  ? 'bg-resend-indigo-500 text-white'
-                  : 'text-resend-gray-300 hover:text-white hover:bg-resend-gray-800'
-                  }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => handleNavClick('/admin')}
-            className="hidden md:block px-4 py-2 bg-resend-gray-800 text-resend-gray-300 rounded-lg hover:bg-resend-gray-700 transition-colors"
-          >
-            Admin
-          </button>
-
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white p-2"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+        {/* Dynamic GMT+5:30 Timezone Clock in the Middle */}
+        <div className="hidden lg:flex items-center space-x-3 text-xs uppercase tracking-widest text-[#888888] font-mono-labels">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>MUMBAI, IN (GMT+5:30)</span>
+          <span className="text-white border-l border-white/20 pl-3 min-w-[90px]">{timeString}</span>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-resend-gray-800">
-            <div className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => {
-                    handleNavClick(item.path);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-3 rounded-lg font-medium text-left transition-all ${isActive(item.path)
-                    ? 'bg-resend-indigo-500 text-white'
-                    : 'text-resend-gray-300 hover:text-white hover:bg-resend-gray-800'
-                    }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-              <button
-                onClick={() => {
-                  handleNavClick('/admin');
-                  setMobileMenuOpen(false);
-                }}
-                className="px-4 py-3 bg-resend-gray-800 text-resend-gray-300 rounded-lg hover:bg-resend-gray-700 transition-colors text-left"
-              >
-                Admin
-              </button>
-            </div>
-          </div>
-        )}
-      </nav>
+        {/* Brutalist Text-Menu on the Right */}
+        <div className="flex items-center space-x-1 sm:space-x-4 font-mono-labels text-[10px] sm:text-xs uppercase tracking-widest text-[#888888]">
+          <button
+            onClick={() => handleNav('services-view')}
+            className="hover:text-white transition-colors py-2 px-1 sm:px-2"
+          >
+            / Services
+          </button>
+          <button
+            onClick={() => handleNav('timeline-view')}
+            className="hover:text-white transition-colors py-2 px-1 sm:px-2"
+          >
+            / Certificates
+          </button>
+          <button
+            onClick={() => handleNav('portfolio-view')}
+            className="hover:text-white transition-colors py-2 px-1 sm:px-2"
+          >
+            / Works
+          </button>
+          <button
+            onClick={() => handleNav('contact-view')}
+            className="hover:text-white transition-colors py-2 px-1 sm:px-2 text-white font-bold"
+          >
+            / Contact
+          </button>
+        </div>
+      </div>
     </header>
   );
 }

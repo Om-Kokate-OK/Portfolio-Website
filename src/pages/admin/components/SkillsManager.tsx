@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X, Save, Loader, Search } from 'lucide-react';
+import { Plus, Trash2, X, Save, Loader } from 'lucide-react';
 import { api } from '../../../lib/api';
 
 const TECH_STACK = [
@@ -85,71 +85,129 @@ export default function SkillsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Delete skill?')) {
+    if (confirm('Delete skill shard coordinate?')) {
       await api.delete(`/skills/${id}`);
       fetchSkills();
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader className="animate-spin text-cyan-500" /></div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64 font-mono text-xs uppercase tracking-widest text-[#888888]">
+        <Loader className="animate-spin text-white mr-3" size={16} />
+        <span>Fetching capability sharding...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold text-white">Skills Dashboard</h1>
-        <button onClick={() => setShowModal(true)} className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all">
-          <Plus size={20} /> Add Technical Skill
+    <div className="max-w-6xl mx-auto space-y-12 select-none">
+      
+      {/* Title & Setup Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-8 relative">
+        <div className="space-y-2">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-[#888888]">/ Capabilities Registry</span>
+          <h1 className="text-4xl font-black uppercase tracking-tighter text-white">SYS_SKILLS</h1>
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-6 py-4 border border-white bg-white hover:bg-black text-black hover:text-white font-mono text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2"
+        >
+          <Plus size={14} />
+          <span>Assign Skill Shard</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Grid of current skills */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {skills.map(skill => {
           const tech = TECH_STACK.find(t => t.name === skill.skill_name);
           return (
-            <div key={skill._id} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-center group">
+            <div
+              key={skill._id}
+              className="bg-black border border-white/10 p-6 rounded-none flex justify-between items-center hover:border-white transition-all duration-300 group relative"
+            >
               <div className="flex items-center gap-4">
-                <img src={`https://cdn.simpleicons.org/${tech?.slug || 'codeforces'}`} className="w-8 h-8" alt="" />
+                <div className="w-10 h-10 bg-black rounded-none flex items-center justify-center border border-white/10 p-2">
+                  <img 
+                    src={`https://cdn.simpleicons.org/${tech?.slug || 'codeforces'}`} 
+                    className="w-full h-full object-contain filter brightness-75 group-hover:brightness-100 transition-all duration-300" 
+                    alt="" 
+                  />
+                </div>
                 <div>
-                  <h3 className="text-white font-bold">{skill.skill_name}</h3>
-                  <p className="text-xs text-slate-500 uppercase tracking-tighter">{skill.category}</p>
+                  <h3 className="text-white font-bold text-sm uppercase tracking-wider">{skill.skill_name}</h3>
+                  <p className="text-[9px] font-mono text-[#888888] uppercase tracking-widest mt-0.5">{skill.category}</p>
                 </div>
               </div>
-              <button onClick={() => handleDelete(skill._id)} className="text-slate-600 hover:text-red-500 p-2"><Trash2 size={18}/></button>
+              
+              <div className="flex items-center space-x-3">
+                <span className="text-[8px] font-mono uppercase px-2 py-1 bg-white/5 border border-white/10 text-slate-300">
+                  {skill.proficiency_level}
+                </span>
+                <button
+                  onClick={() => handleDelete(skill._id)}
+                  className="border border-red-500/20 text-red-500 hover:border-red-500 hover:bg-red-500/10 p-2 transition-all"
+                  title="Remove Shard"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
             </div>
           );
         })}
+
+        {skills.length === 0 && (
+          <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-none text-xs font-mono uppercase tracking-widest text-[#888888]">
+            No capabilities registered yet. Add a skill to begin sync.
+          </div>
+        )}
       </div>
 
+      {/* Modal Dialog */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111] border border-white/10 p-8 rounded-[2rem] w-full max-w-md shadow-2xl">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-white">Assign Language</h2>
-              <button onClick={() => setShowModal(false)}><X className="text-slate-500" /></button>
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-[1000] p-4 font-mono">
+          <div className="bg-black border border-white/10 p-8 rounded-none w-full max-w-md shadow-2xl relative space-y-6 animate-fadeIn">
+            
+            {/* Subtle decorative brutalist corner elements */}
+            <div className="absolute -top-1 -left-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white"></div>
+            <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white"></div>
+
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+              <h2 className="text-sm font-black uppercase text-white tracking-widest">/ Assign Skill Shard</h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-[#888888] hover:text-white p-1 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+              >
+                <X size={16} />
+              </button>
             </div>
             
             <div className="space-y-6">
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Search Official Tech Stack</label>
+              <div className="relative">
+                <label className="text-[10px] uppercase tracking-widest text-[#888888] mb-2 block">
+                  Search Official Stack
+                </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 text-slate-500" size={18} />
                   <input 
                     type="text" 
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 pl-10 text-white focus:border-cyan-500 outline-none"
-                    placeholder="Search C++, React, Docker..."
+                    className="w-full bg-black border border-white/10 rounded-none p-3 text-white text-xs uppercase tracking-widest outline-none focus:border-white transition-all"
+                    placeholder="SEARCH C++, REACT, DOCKER..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                   {searchTerm && (
-                    <div className="absolute w-full mt-2 bg-slate-900 border border-slate-800 rounded-xl max-h-56 overflow-y-auto z-10 shadow-2xl">
+                    <div className="absolute w-full mt-2 bg-black border border-white/10 rounded-none max-h-56 overflow-y-auto z-50 shadow-2xl divide-y divide-white/5">
                       {TECH_STACK.filter(t => t.name.toLowerCase().includes(searchTerm.toLowerCase())).map(tech => (
                         <button 
                           key={tech.name}
                           onClick={() => handleSelectTech(tech)}
-                          className="w-full text-left p-4 hover:bg-cyan-600 flex items-center gap-4 border-b border-white/5 last:border-0"
+                          className="w-full text-left p-3 hover:bg-white hover:text-black flex items-center gap-3 text-[10px] uppercase tracking-widest transition-all text-[#888888] font-bold"
                         >
-                          <img src={`https://cdn.simpleicons.org/${tech.slug}`} className="w-6 h-6" alt="" />
-                          <span className="text-white font-medium">{tech.name}</span>
+                          <img src={`https://cdn.simpleicons.org/${tech.slug}`} className="w-4 h-4 object-contain" alt="" />
+                          <span>{tech.name}</span>
                         </button>
                       ))}
                     </div>
@@ -158,32 +216,41 @@ export default function SkillsManager() {
               </div>
 
               {formData.skill_name && (
-                <div className="p-4 bg-cyan-600/10 border border-cyan-600/30 rounded-xl">
-                  <p className="text-xs text-cyan-500 font-bold uppercase mb-1">Selected</p>
-                  <div className="flex items-center gap-2">
-                    <img src={`https://cdn.simpleicons.org/${TECH_STACK.find(t => t.name === formData.skill_name)?.slug}`} className="w-5 h-5" alt="" />
-                    <span className="text-white font-bold">{formData.skill_name}</span>
+                <div className="p-4 bg-white/5 border border-white/10 rounded-none flex items-center justify-between text-xs">
+                  <div>
+                    <span className="text-[8px] uppercase tracking-widest text-[#888888]">Selected Capability</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <img src={`https://cdn.simpleicons.org/${TECH_STACK.find(t => t.name === formData.skill_name)?.slug}`} className="w-4 h-4 object-contain" alt="" />
+                      <span className="text-white font-bold uppercase tracking-wider">{formData.skill_name}</span>
+                    </div>
                   </div>
+                  <span className="text-[8px] uppercase tracking-widest px-2 py-0.5 bg-white/10 text-slate-300">
+                    {formData.category}
+                  </span>
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Proficiency</label>
+                <label className="text-[10px] uppercase tracking-widest text-[#888888] mb-2 block">
+                  Proficiency Rating
+                </label>
                 <select 
-                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-white appearance-none"
+                  className="w-full bg-black border border-white/10 rounded-none p-3 text-white text-xs uppercase tracking-widest outline-none focus:border-white transition-all"
                   value={formData.proficiency_level}
                   onChange={(e) => setFormData({...formData, proficiency_level: e.target.value})}
                 >
-                  {PROFICIENCY_LEVELS.map(level => <option key={level} value={level}>{level}</option>)}
+                  {PROFICIENCY_LEVELS.map(level => (
+                    <option key={level} value={level} className="bg-black text-white">{level.toUpperCase()}</option>
+                  ))}
                 </select>
               </div>
 
               <button 
                 onClick={handleSave} 
                 disabled={saving || !formData.skill_name}
-                className="w-full py-4 bg-cyan-600 hover:bg-cyan-500 rounded-xl font-bold text-white transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+                className="w-full py-4 bg-white hover:bg-black disabled:opacity-50 text-black hover:text-white border border-white font-black uppercase text-xs tracking-widest transition-all duration-300 flex justify-center items-center gap-2 shadow-2xl"
               >
-                {saving ? <Loader className="animate-spin" /> : <><Save size={20}/> Save Skill</>}
+                {saving ? <Loader className="animate-spin" size={14} /> : <><Save size={14}/> Save Capability</>}
               </button>
             </div>
           </div>

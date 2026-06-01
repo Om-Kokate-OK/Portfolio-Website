@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRouter } from './hooks/useRouter';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -8,12 +9,27 @@ import CodingProfile from './pages/CodingProfile';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminRegister from './pages/admin/Register';
+import LoadingScreen from './components/LoadingScreen';
 
 function App() {
   const { currentPath } = useRouter();
+  const [showLoader, setShowLoader] = useState(true);
 
-  if (currentPath === '/admin' || currentPath === '/admin/login') {
+  const handleLoadComplete = () => {
+    setShowLoader(false);
+  };
+
+  if (showLoader) {
+    return <LoadingScreen onComplete={handleLoadComplete} />;
+  }
+
+  if (currentPath === '/openItBaby') {
     return <AdminLogin />;
+  }
+
+  if (currentPath === '/mynameisOM') {
+    return <AdminRegister />;
   }
 
   if (currentPath === '/admin/dashboard' || currentPath.startsWith('/admin/dashboard/')) {

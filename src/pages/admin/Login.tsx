@@ -6,12 +6,9 @@ import { useRouter } from '../../hooks/useRouter';
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
-  const [requiresOtp, setRequiresOtp] = useState(false);
-  const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, verifyOtp } = useAuth();
+  const { signIn } = useAuth();
   const { navigate } = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -20,33 +17,10 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const { error: signInError, requiresOtp: reqOtp, userId: uid } = await signIn(username, password);
+      const { error: signInError } = await signIn(username, password);
 
       if (signInError) {
         setError('Invalid username or password');
-      } else if (reqOtp) {
-        setRequiresOtp(true);
-        setUserId(uid || '');
-      } else {
-        navigate('/admin/dashboard');
-      }
-    } catch {
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOtpSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const { error: otpError } = await verifyOtp(userId, otp);
-
-      if (otpError) {
-        setError('Invalid OTP');
       } else {
         navigate('/admin/dashboard');
       }
@@ -58,114 +32,94 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Admin Panel
+    <div className="min-h-screen flex items-center justify-center bg-[#000000] px-4 relative overflow-hidden select-none">
+      {/* Background wireframe grids */}
+      <div className="absolute inset-0 grid grid-cols-4 pointer-events-none">
+        <div className="border-r border-white/5"></div>
+        <div className="border-r border-white/5"></div>
+        <div className="border-r border-white/5"></div>
+        <div></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10 space-y-8">
+        <div className="text-center space-y-3">
+          <span className="text-[10px] font-mono-labels uppercase tracking-widest text-[#888888]">// Authentication Portal</span>
+          <h1 className="text-5xl font-black uppercase tracking-tighter text-white">
+            ADMIN_SYNC
           </h1>
-          <p className="text-gray-400">Sign in to manage your portfolio</p>
+          <p className="text-slate-400 text-xs font-mono-labels uppercase tracking-wider">Secure portfolio synchronize gate</p>
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-8 border border-slate-800">
+        <div className="bg-[#0b0b0b] rounded-3xl p-8 border border-white/10 shadow-2xl relative">
+          <div className="absolute top-4 right-4 flex items-center space-x-1.5 text-[8px] font-mono-labels uppercase text-slate-500">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>SHARD-SYS_ACTIVE</span>
+          </div>
+
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-center space-x-3">
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center space-x-3">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-              <p className="text-red-500 text-sm">{error}</p>
+              <p className="text-red-400 text-xs font-mono-labels uppercase tracking-wider">{error}</p>
             </div>
           )}
 
-          {requiresOtp ? (
-            <form onSubmit={handleOtpSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-300 mb-2">
-                  Enter OTP
-                </label>
-                <input
-                  type="text"
-                  id="otp"
-                  required
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all text-white"
-                  placeholder="Enter 6-digit OTP"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="username" className="block text-[10px] font-mono-labels uppercase tracking-widest text-[#888888] mb-2">
+                User Coordinate ID
+              </label>
+              <input
+                type="text"
+                id="username"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 bg-[#111] border border-white/10 focus:border-white rounded-xl focus:ring-0 outline-none transition-all text-white text-sm font-light"
+                placeholder="Enter admin ID"
+              />
+            </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg font-semibold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                    <span>Verifying...</span>
-                  </>
-                ) : (
-                  <span>Verify OTP</span>
-                )}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all text-white"
-                  placeholder="admin"
-                />
-              </div>
+            <div>
+              <label htmlFor="password" className="block text-[10px] font-mono-labels uppercase tracking-widest text-[#888888] mb-2">
+                Passphrase Vector
+              </label>
+              <input
+                type="password"
+                id="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-[#111] border border-white/10 focus:border-white rounded-xl focus:ring-0 outline-none transition-all text-white text-sm font-light"
+                placeholder="••••••••••••"
+              />
+            </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all text-white"
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg font-semibold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    <span>Sign In</span>
-                  </>
-                )}
-              </button>
-            </form>
-          )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center space-x-2 py-4 bg-white hover:bg-slate-200 text-black font-black uppercase text-xs tracking-widest rounded-xl transition-all disabled:opacity-50"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-black mr-2"></div>
+                  <span>Syncing...</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  <span>Execute Sync</span>
+                </>
+              )}
+            </button>
+          </form>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="text-center mt-6">
           <button
             onClick={() => navigate('/')}
-            className="text-gray-400 hover:text-cyan-400 transition-colors"
+            className="text-xs font-mono-labels uppercase tracking-widest text-[#888888] hover:text-white transition-colors"
           >
-            ← Back to Portfolio
+            ← Cancel Sync / Return
           </button>
         </div>
       </div>

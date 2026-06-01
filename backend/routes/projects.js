@@ -61,7 +61,7 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Process image URL to get direct link
-router.get('/process-image-url', async (req, res) => {
+router.get('/process-image-url', auth, async (req, res) => {
     try {
         const { url } = req.query;
         if (!url) {

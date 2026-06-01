@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0b0b0b] text-[#ffffff] overflow-x-hidden selection:bg-white selection:text-black;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Monospace rules for metadata and micro-labels */
+  .font-mono-labels {
+    font-family: 'Space Mono', 'Roboto Mono', 'Courier New', Courier, monospace;
+  }
+}
+
+/* Stark Brutalist Borders & Dividers */
+.brutalist-border-t {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.brutalist-border-b {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.brutalist-border-l {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.brutalist-border-r {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Web design layout grids */
+.layout-grid {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Custom Scrollbar for Stark Theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #333333;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+
+/* Custom layout ticking animation rules */
+@keyframes infiniteMarquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: infiniteMarquee 25s linear infinite;
+}
+
+

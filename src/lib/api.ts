@@ -6,8 +6,13 @@ export const api = axios.create({
     baseURL: API_BASE_URL,
 });
 
-// Add token to requests if available
-const token = localStorage.getItem('token');
-if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-}
+// Dynamic interceptor to always attach the latest token
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
+    }
+    return config;
+});
